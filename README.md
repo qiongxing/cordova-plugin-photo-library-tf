@@ -41,3 +41,7 @@ Yeah, you will still need the "@ionic-native/photo-library" plugin.
 # I've Got Issues
 
 Write it on the Issues page and I'll see what I can do. :P
+
+# Release Notes
+## 2.2.98
+- Updated to work with latest Swift UIApplication stuff
