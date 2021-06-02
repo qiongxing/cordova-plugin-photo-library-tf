@@ -40,6 +40,7 @@ Yeah, you will still need the "@ionic-native/photo-library" plugin.
 
 # Capacitor
 ```
+npm i --save @ionic-native/photo-library@4
 npm i --save cordova-plugin-photo-library-sism
 ```
 
