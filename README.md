@@ -1,3 +1,7 @@
+Haven't worked on this project for a while and even became a maintainer for the main library.
+
+The code diverged too much though so this will still be maintained, and I will merge your PRs and test them if they solve any of the issues.
+
 # What is this?
 
 Basically, it's a fork/replacement for https://github.com/terikon/cordova-plugin-photo-library.
