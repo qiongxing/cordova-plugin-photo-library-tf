@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmarkclx/cordova-plugin-photo-library-sism"
+    "url": "git+https://github.com/qiongxing/cordova-plugin-photo-library-tf.git"
   },
   "author": {
     "name": "Roman Viskin",

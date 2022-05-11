@@ -200,10 +200,11 @@ public class PhotoLibraryService {
 
     saveMedia(context, cordova, url, album, imageMimeToExtension, new FilePathRunnable() {
       @Override
-      public void run(String filePath) {
+      public void run(String filePath, Uri uri) {
         try {
           // Find the saved image in the library and return it as libraryItem
-          String whereClause = MediaStore.MediaColumns.DATA + " = \"" + filePath + "\"";
+          String whereClause = "(" + MediaStore.MediaColumns.DATA + " = \"" + filePath + "\")";
+          whereClause = uri.toString();
           queryLibrary(context, whereClause, new ChunkResultRunnable() {
             @Override
             public void run(ArrayList<JSONObject> chunk, int chunkNum, boolean isLastChunk) {
@@ -223,11 +224,10 @@ public class PhotoLibraryService {
 
     saveMedia(context, cordova, url, album, videMimeToExtension, new FilePathRunnable() {
       @Override
-      public void run(String filePath) {
+      public void run(String filePath, Uri uri) {
         // TODO: call queryLibrary and return libraryItem of what was saved
       }
     });
-
   }
 
   public class PictureData {
@@ -280,14 +280,26 @@ public class PhotoLibraryService {
 
     final String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC";
 
-    final Cursor cursor = context.getContentResolver().query(
-      collection,
-      columnValues.toArray(new String[columns.length()]),
-      whereClause, null, sortOrder);
+    Cursor cursor;
+    if (whereClause == "")
+    {
+        cursor= context.getContentResolver().query(
+              collection,
+              columnValues.toArray(new String[columns.length()]),
+              whereClause, null, sortOrder);
+    }
+    else
+    {
+        Uri uri = Uri.parse(whereClause);
+        cursor= context.getContentResolver().query(
+              uri,
+              columnValues.toArray(new String[columns.length()]),
+              null, null, null);
+    }
 
     final ArrayList<JSONObject> buffer = new ArrayList<JSONObject>();
 
-    if (cursor.moveToFirst()) {
+    if (cursor != null && cursor.moveToFirst()) {
       do {
         JSONObject item = new JSONObject();
 
@@ -316,8 +328,9 @@ public class PhotoLibraryService {
       }
       while (cursor.moveToNext());
     }
-
-    cursor.close();
+    if(cursor != null){
+      cursor.close();
+    }
 
     return buffer;
 
@@ -411,8 +424,10 @@ public class PhotoLibraryService {
       return mimeType;
 
     }
+    if (cursor != null){
+      cursor.close();
+    }
 
-    cursor.close();
     return null;
   }
 
@@ -576,7 +591,7 @@ public class PhotoLibraryService {
     MediaScannerConnection.scanFile(context, new String[]{filePath}, null, new MediaScannerConnection.OnScanCompletedListener() {
       @Override
       public void onScanCompleted(String path, Uri uri) {
-        completion.run(path);
+        completion.run(path, uri);
       }
     });
 
@@ -629,8 +644,7 @@ public class PhotoLibraryService {
 
     } else {
 
-      String noQ = url.split("\\?")[0]; //no q
-      String extension = url.contains(".") ? noQ.substring(noQ.lastIndexOf(".")) : "";
+      String extension = url.contains(".") ? url.substring(url.lastIndexOf(".")) : "";
       targetFile = getImageFileName(albumDirectory, extension);
 
       InputStream is;
@@ -663,7 +677,7 @@ public class PhotoLibraryService {
 
   public interface FilePathRunnable {
 
-    void run(String filePath);
+    void run(String filePath, Uri uri);
 
   }
 
